@@ -306,6 +306,13 @@
     transition:border-color .2s ease, transform .2s ease;
   }
   .reel-card:hover{border-color:var(--accent); transform:translateY(-4px);}
+  .reel-video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000;}
+  .reel-card.playing .tag,
+  .reel-card.playing .playbtn,
+  .reel-card.playing .label{ opacity:0; pointer-events:none; }
+  .reel-card .tag,
+  .reel-card .playbtn,
+  .reel-card .label{ transition:opacity .2s ease; }
   .reel-card .tag{
     position:absolute; top:12px; left:12px; font-family:var(--mono); font-size:10px;
     letter-spacing:.1em; text-transform:uppercase; color:var(--muted); background:rgba(0,0,0,.4); padding:4px 8px;
@@ -603,12 +610,12 @@
       <p>Short walkthroughs of agents built for real workflows — new demos added as each build ships.</p>
     </div>
     <div class="reel-grid">
-      <div class="reel-card" role="group" aria-label="Booking Agent walkthrough, coming soon"><span class="tag">Scheduling</span><div class="playbtn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="label"><h3>Booking Agent</h3><span>Walkthrough coming soon</span></div></div>
+      <div class="reel-card" data-video="videos/booking-agent.mp4" role="group" aria-label="Booking Agent walkthrough, 22 seconds"><video class="reel-video" src="videos/booking-agent.mp4" preload="metadata" playsinline muted></video><span class="tag">Scheduling</span><div class="playbtn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="label"><h3>Booking Agent</h3><span>0:22 walkthrough</span></div></div>
       <div class="reel-card" role="group" aria-label="Support Agent walkthrough, coming soon"><span class="tag">Customer Support</span><div class="playbtn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="label"><h3>Support Agent</h3><span>Walkthrough coming soon</span></div></div>
       <div class="reel-card" role="group" aria-label="Follow-up Agent walkthrough, coming soon"><span class="tag">Sales Follow-up</span><div class="playbtn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="label"><h3>Follow-up Agent</h3><span>Walkthrough coming soon</span></div></div>
       <div class="reel-card" role="group" aria-label="Intake Agent walkthrough, coming soon"><span class="tag">Data Entry</span><div class="playbtn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="label"><h3>Intake Agent</h3><span>Walkthrough coming soon</span></div></div>
     </div>
-    <p class="reel-note">// Drop finished .mp4 files into a /videos folder and point each card at them to go live.</p>
+    <p class="reel-note">// Booking Agent demo is live. Drop the next finished .mp4 into /videos and point a card at it to bring more online.</p>
   </div>
 </section>
 
@@ -758,6 +765,26 @@
         submitBtn.disabled = false;
         submitBtn.textContent = 'Request appointment';
       });
+  });
+
+  document.querySelectorAll('.reel-card[data-video]').forEach(function(card){
+    const video = card.querySelector('.reel-video');
+    if (!video) return;
+    card.addEventListener('click', function(){
+      if (video.paused){
+        video.muted = false;
+        video.currentTime = 0;
+        video.play();
+        card.classList.add('playing');
+      } else {
+        video.pause();
+        card.classList.remove('playing');
+      }
+    });
+    video.addEventListener('ended', function(){
+      card.classList.remove('playing');
+      video.currentTime = 0;
+    });
   });
 </script>
 
